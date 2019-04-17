@@ -64,18 +64,9 @@ exports.CompositeProvider = providers => ({
     return true;
   },
   getSuggestions(text) {
-    // First try to limit the sources of suggestions to one per base language.
-    // This is to mitigate performance issues (easily 20+ seconds in some cases).
-    const sources = Object.values(
-      providers.reduce((acc, p) => {
-        if (!p.locale) return acc;
-        return { ...acc, [p.locale.substring(0, 2)]: p };
-      }, {})
-    );
-
     let suggestions = [];
-    for (let i = 0; i < sources.length; i += 1) {
-      suggestions = [...suggestions, ...sources[i].getSuggestions(text)];
+    for (let i = 0; i < providers.length; i += 1) {
+      suggestions = [...suggestions, ...providers[i].getSuggestions(text)];
     }
 
     // Remove duplicates.
